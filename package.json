@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev:data": "cross-env APP=data vite",
-    "dev:host": "cross-env APP=host vite",
+    "dev:data": "cross-env APP=data vite --port 5555",
+    "dev:host": "cross-env APP=host vite --port 5554",
     "build:data": "tsc -b && cross-env APP=data vite build",
     "build:host": "tsc -b && cross-env APP=host vite build",
     "build": "npm run build:data && npm run build:host",
