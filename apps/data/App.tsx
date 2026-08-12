@@ -1,17 +1,33 @@
+import { useEffect } from 'react';
+import { AlbumService } from './services/album.service';
+import { AlbumEvent } from './models/album.model';
+import { EventType } from './consts/event.const';
+
 function App() {
   const PARENT_ORIGIN = 'http://localhost:5554';
 
-  window.addEventListener('message', (event) => {
-    if (event.origin !== PARENT_ORIGIN) {
-      return;
-    }
+  useEffect(() => {
+    const albumService = AlbumService.getInstance();
 
-    console.log(`Data app received event`, event.data);
-    window.parent.postMessage({
-      type: 'DATA',
-      text: `Here's your message back: ${ event.data.text }`
-    }, PARENT_ORIGIN);
-  });
+    const handleMessageFromHost = (event: MessageEvent<AlbumEvent>) => {
+      if (event.origin !== PARENT_ORIGIN) {
+        return;
+      }
+
+      const payload = event.data;
+      console.log('Received event from host', payload);
+      switch (payload.type) {
+        case EventType.SEARCH:
+          window.parent.postMessage({
+            type: payload.type,
+            data: albumService.searchAlbums(payload.data as string)
+          } as AlbumEvent, PARENT_ORIGIN);
+      }
+    };
+
+    window.addEventListener('message', handleMessageFromHost);
+    return () => window.removeEventListener('message', handleMessageFromHost);
+  }, []);
 
   return null;
 }

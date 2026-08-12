@@ -1,0 +1,22 @@
+#info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  border: 1px solid #888;
+  background: #555;
+
+  #artist-title, #songcount-duration {
+    display: flex;
+    align-items: center;
+    margin: 0 0.5rem;
+
+    p {
+      color: #000;
+    }
+  }
+}
+
+#info.selected {
+  background: #AAA;
+}
