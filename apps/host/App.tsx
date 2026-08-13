@@ -5,16 +5,22 @@ import { CircularProgress, debounce, TextField } from '@mui/material';
 import AlbumListItem from './components/album/AlbumListItem.tsx';
 import type { Album, AlbumEvent } from './models/album.model.ts';
 import { EventType } from './consts/event.const.ts';
+import { useQuery } from '@tanstack/react-query'
 
 function App() {
+
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const TRUSTED_ORIGIN = 'http://localhost:5555';
 
-  const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
-  const [searchedAlbums, setSearchedAlbums] = useState<Album[]>([]);
   const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
+
+  // Resolvers hold values from IFrame message handler to be resolved in the queryFn(s), keyed by requestId
+  // so overlapping in-flight requests of the same type don't overwrite each other.
+  const pendingAlbumsResolversRef = useRef(new Map<string, (albums: Album[]) => void>());
+  const pendingAlbumGalleryResolversRef = useRef(new Map<string, (albumImages: string[]) => void>());
 
   useEffect(() => {
     const handleMessageFromIframe = (event: MessageEvent<AlbumEvent>) => {
@@ -26,8 +32,13 @@ function App() {
       console.log('Received event from data layer', payload);
       switch (payload.type) {
         case EventType.SEARCH:
-          setSearchedAlbums(payload.data as Album[]);
-          setLoading(false);
+          pendingAlbumsResolversRef.current.get(payload.requestId)?.(payload.data as Album[]);
+          pendingAlbumsResolversRef.current.delete(payload.requestId);
+          return;
+        case EventType.ALBUM_CLICK:
+          pendingAlbumGalleryResolversRef.current.get(payload.requestId)?.(payload.data as string[]);
+          pendingAlbumGalleryResolversRef.current.delete(payload.requestId);
+          return;
       }
     };
 
@@ -50,44 +61,53 @@ function App() {
   );
 
   useEffect(() => {
-    // Prevent running on the very first mount if the input is empty
-    if (debouncedSearchTerm !== null) {
-      sendMessageToIframe({
-        type: EventType.SEARCH,
-        data: debouncedSearchTerm
-      } as AlbumEvent);
-    }
-  }, [debouncedSearchTerm]);
-
-  useEffect(() => {
     return () => debouncedSearch.clear();
   }, [debouncedSearch]);
 
   const search = (searchTerm: string) => {
     setSearchTerm(searchTerm);
     debouncedSearch(searchTerm);
-    setLoading(true);
   }
 
-  const albumClicked = (album: Album) => {
-    if (selectedAlbum === album) {
-      setSelectedAlbum(null);
-    } else {
-      setSelectedAlbum(album);
-    }
+  const { data: foundAlbums = [], isLoading: albumsLoading = false, error: albumsError } = useQuery({
+    queryKey: ['albums', debouncedSearchTerm],
+    queryFn: () => new Promise<Album[]>((resolve) => {
+      const requestId = crypto.randomUUID();
+      pendingAlbumsResolversRef.current.set(requestId, resolve);
+      sendMessageToIframe({
+        type: EventType.SEARCH,
+        requestId,
+        data: debouncedSearchTerm
+      } as AlbumEvent);
+    }),
+    enabled: !!debouncedSearchTerm
+  });
 
-    sendMessageToIframe({
-      type: EventType.ALBUM_CLICK,
-      data: {
-        artist: album.artist,
-        title: album.title
-      }
-    } as AlbumEvent);
+  const albumClicked = (album: Album | null) => {
+    setSelectedAlbum(selectedAlbum === album ? null : album);
   }
+
+  const { data: albumGalleryImages = [], isLoading: albumGalleryLoading = false, error: albumGalleryError } = useQuery({
+    queryKey: ['albumGallery', selectedAlbum],
+    queryFn: () => new Promise<string[]>((resolve) => {
+      const requestId = crypto.randomUUID();
+      pendingAlbumGalleryResolversRef.current.set(requestId, resolve);
+      sendMessageToIframe({
+        type: EventType.ALBUM_CLICK,
+        requestId,
+        data: {
+          artist: selectedAlbum?.artist,
+          title: selectedAlbum?.title
+        }
+      } as AlbumEvent);
+    }),
+    enabled: !!selectedAlbum
+  });
 
   return (
     <>
       <section id="search">
+        <h1>Lucra Album Search</h1>
         <TextField fullWidth
                    variant="filled"
                    label="Search for an album"
@@ -98,30 +118,35 @@ function App() {
         </TextField>
       </section>
 
-      { loading && <CircularProgress aria-label="Loading…"/> }
+      { albumsLoading && <CircularProgress aria-label="Loading…"/> }
 
-      { searchedAlbums.length > 0 && !loading &&
+      { foundAlbums.length > 0 && !albumsLoading &&
           <section id="albums">
               <section id="album-list"
                        className={ selectedAlbum ? 'selected' : '' }>
                   <ul>
-                    { searchedAlbums.map((album) => (
+                    { foundAlbums.map((album: Album) => (
                       <AlbumListItem key={ `${ album.artist }-${ album.title }` }
                                      album={ album }
                                      selected={ selectedAlbum === album }
-                                     albumClicked={ albumClicked }/>
+                                     albumClicked={ () => albumClicked(album) }/>
                     ))
                     }
                   </ul>
               </section>
 
-            { selectedAlbum &&
+            { albumGalleryLoading && <CircularProgress aria-label="Loading…"/> }
+
+            { albumGalleryImages.length > 0 && !albumGalleryLoading &&
                 <section id="selectedAlbum">
                     <div id="photo-slider">
-                        <img src="assets/hero.png" alt=""/>
+                      { albumGalleryImages.map((image: string) => (
+                        <img key={ image } src={ image } alt=""/>
+                      ))
+                      }
                     </div>
                     <div id="artist-title">
-                        <p>{ selectedAlbum.artist } - { selectedAlbum.title }</p>
+                        <p>{ selectedAlbum?.artist } - { selectedAlbum?.title }</p>
                     </div>
                 </section>
             }

@@ -20,8 +20,17 @@ function App() {
         case EventType.SEARCH:
           window.parent.postMessage({
             type: payload.type,
+            requestId: payload.requestId,
             data: albumService.searchAlbums(payload.data as string)
           } as AlbumEvent, PARENT_ORIGIN);
+          break;
+        case EventType.ALBUM_CLICK:
+          window.parent.postMessage({
+            type: payload.type,
+            requestId: payload.requestId,
+            data: ['assets/hero.png']
+          } as AlbumEvent, PARENT_ORIGIN);
+          break;
       }
     };
 

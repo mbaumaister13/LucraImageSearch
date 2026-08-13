@@ -3,8 +3,8 @@
   align-items: center;
   justify-content: space-between;
   height: 32px;
-  border: 1px solid #888;
-  background: #555;
+  border: 1px solid #555;
+  background: #888;
 
   #artist-title, #songcount-duration {
     display: flex;
@@ -17,6 +17,10 @@
   }
 }
 
-#info.selected {
+#info:hover {
   background: #AAA;
+}
+
+#info.selected {
+  background: #ADA;
 }

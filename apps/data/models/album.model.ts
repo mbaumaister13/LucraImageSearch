@@ -9,5 +9,6 @@ export interface Album {
 
 export interface AlbumEvent {
   type: EventType;
-  data: Album | Album[] | string; // string represents search term
+  requestId: string;
+  data: Album | Album[] | string | string[];
 }

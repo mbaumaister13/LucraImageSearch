@@ -1,7 +1,7 @@
 #root {
   display: flex;
   align-items: center;
-}
+  justify-content: center;
 
 iframe {
   visibility: hidden;
@@ -11,6 +11,7 @@ iframe {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   margin: 4rem 1rem 2rem;
   width: 97%;
 }
