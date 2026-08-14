@@ -1,18 +1,23 @@
 #info {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  height: 32px;
+  justify-content: start;
+  height: 128px;
   border: 1px solid #555;
   background: #888;
 
-  #artist-title, #songcount-duration {
+  img, video {
+    padding-left: 1rem;
+  }
+
+  #artist-title {
     display: flex;
     align-items: center;
     margin: 0 0.5rem;
 
     p {
       color: #000;
+      text-align: left;
     }
   }
 }

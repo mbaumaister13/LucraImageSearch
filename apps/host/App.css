@@ -47,5 +47,9 @@ iframe {
     flex-direction: column;
     width: 50%;
     height: 100%;
+
+    .slider {
+      padding: 1rem 0;
+    }
   }
 }

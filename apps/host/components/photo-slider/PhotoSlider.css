@@ -1,0 +1,7 @@
+.slider {
+  height: 500px;
+  width: 500px;
+  overflow: hidden;
+  display: flex;
+  justify-content: left;
+}

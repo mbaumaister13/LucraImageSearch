@@ -1,14 +1,22 @@
-import { EventType } from '../../data/consts/event.const.ts';
+import { EventType } from '../consts/event.const';
+
+export interface Image {
+  id: string;
+  link: string;
+  type: string;
+}
 
 export interface Album {
-  artist: string;
+  id: string;
   title: string;
-  songCount: number;
-  duration: string;
+  description: string;
+  coverImage: Image;
+  images: Image[];
 }
 
 export interface AlbumEvent {
   type: EventType;
   requestId: string;
-  data: Album | Album[] | string | string[];
+  data?: string | Album | Album[] | Image[];
+  error?: string;
 }

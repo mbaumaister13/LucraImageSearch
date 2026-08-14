@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev:data": "cross-env APP=data vite --port 5555",
-    "dev:host": "cross-env APP=host vite --port 5554",
+    "dev:data": "cross-env APP=data vite --host --port 5555 --force",
+    "dev:host": "cross-env APP=host vite --host --port 5554 --force",
     "build:data": "tsc -b && cross-env APP=data vite build",
     "build:host": "tsc -b && cross-env APP=host vite build",
     "build": "npm run build:data && npm run build:host",
@@ -18,7 +18,8 @@
     "@mui/material": "^9.3.1",
     "@tanstack/react-query": "^5.101.4",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "uuid": "^14.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
