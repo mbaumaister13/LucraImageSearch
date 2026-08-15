@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { cache } from 'react';
 import { Album, Image } from '../models/album.model';
 
 export class ImgurService {
@@ -16,7 +17,7 @@ export class ImgurService {
     return ImgurService.instance;
   }
 
-  getAlbums = async (searchTerm: string) => {
+  getAlbums = cache(async (searchTerm: string) => {
     const response = await fetch(`${ this.albumUrl }${ encodeURIComponent(searchTerm) }`, {
       headers: new Headers({
         "Authorization": "Client-ID 2d086962f60c89e"
@@ -28,7 +29,7 @@ export class ImgurService {
     }
 
     const result = await response.json();
-    const output: Album[] = await Promise.all(result.data.slice(0, 5).map(async (album: any) => ({
+    const output: Album[] = await Promise.all(result.data.slice(0, 6).map(async (album: any) => ({
       id: album.id,
       title: album.title,
       description: album.description,
@@ -37,9 +38,9 @@ export class ImgurService {
     } as Album)));
     console.log(output);
     return output;
-  }
+  });
 
-  getImage = async (imageId: string) => {
+  getImage = cache(async (imageId: string) => {
     const response = await fetch(`${ this.imageUrl }${ encodeURIComponent(imageId) }`, {
       headers: new Headers({
         "Authorization": "Client-ID 2d086962f60c89e"
@@ -56,5 +57,5 @@ export class ImgurService {
       link: result.data.link,
       type: result.data.type
     } as Image;
-  }
+  });
 }

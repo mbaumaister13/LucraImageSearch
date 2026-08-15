@@ -19,6 +19,34 @@ function App() {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
 
+  // Used for animated album list
+  const [areSearchResultsRendered, setAreSearchResultsRendered] = useState(false);
+  const isSearchAnimating = Boolean(debouncedSearchTerm);
+
+  if (debouncedSearchTerm && !areSearchResultsRendered) {
+    setAreSearchResultsRendered(true);
+  }
+
+  const handleSearchTransitionEnd = () => {
+    if (!isSearchAnimating) {
+      setAreSearchResultsRendered(false);
+    }
+  };
+
+  // Used for animated album selection
+  const [isAlbumDetailsRendered, setIsAlbumDetailsRendered] = useState(false);
+  const isAlbumListAnimating = Boolean(selectedAlbum);
+
+  if (selectedAlbum && !isAlbumDetailsRendered) {
+    setIsAlbumDetailsRendered(true);
+  }
+
+  const handleAlbumListTransitionEnd = () => {
+    if (!isAlbumListAnimating) {
+      setIsAlbumDetailsRendered(false);
+    }
+  };
+
   // Resolvers hold the resolve/reject pair from the IFrame message handler's matching Promise, keyed by
   // requestId so overlapping in-flight requests of the same type don't overwrite each other.
   type PendingRequest<T> = { resolve: (value: T) => void; reject: (error: Error) => void };
@@ -32,7 +60,6 @@ function App() {
       }
 
       const payload = event.data as AlbumEvent;
-      console.log('Received event from data layer', payload);
       switch (payload.type) {
         case EventType.SEARCH: {
           // Fetch stashed resolve/reject for request ID
@@ -65,7 +92,7 @@ function App() {
 
     window.addEventListener('message', handleMessageFromIframe);
     return () => window.removeEventListener('message', handleMessageFromIframe);
-  }, []);
+  }, [TRUSTED_ORIGIN]);
 
   const sendMessageToIframe = (payload: AlbumEvent) => {
     if (iframeRef.current && iframeRef.current.contentWindow) {
@@ -77,6 +104,7 @@ function App() {
     () =>
       debounce((searchTerm) => {
         setDebouncedSearchTerm(searchTerm); // Sets the value after 500ms
+        setAreSearchResultsRendered(!!searchTerm);
       }, 500),
     []
   );
@@ -127,11 +155,19 @@ function App() {
 
   return (
     <>
-      <section id="search">
-        <h1>Lucra Image Search</h1>
+      <section id="search" 
+               className={ areSearchResultsRendered ? 'top' : '' }>
+        <div id="header">
+          <img src="./assets/lucra_logo.png" alt="Lucra logo" width={96} height={96}></img>
+          <h1 className={ areSearchResultsRendered ? 'top' : '' }>
+            Lucra Image Search
+          </h1>
+        </div>
+        
         <TextField fullWidth
                    variant="filled"
                    label="Search for an album"
+                   color="success"
                    value={ searchTerm }
                    onChange={ (event: React.ChangeEvent<HTMLInputElement>) => {
                      search(event.target.value);
@@ -139,39 +175,59 @@ function App() {
         </TextField>
       </section>
 
-      { albumsError && <Alert severity="error">There was an issue fetching albums for your search query.</Alert> }
+      { areSearchResultsRendered && 
+        <section id="albumContainer" 
+                 onTransitionEnd={ handleSearchTransitionEnd }>
+          { albumsError && <Alert severity="error">There was an issue fetching albums for your search query.</Alert> }
 
-      { albumsLoading && <CircularProgress aria-label="Loading…"/> }
+          { albumsLoading && <CircularProgress color="success" aria-label="Loading…"/> }
 
-      { foundAlbums.length > 0 && !albumsLoading && !albumsError &&
-          <section id="albums">
+          { !albumsLoading && !albumsError && foundAlbums.length === 0 &&
+            <h2>No albums found.</h2>
+          }
+
+          { !albumsLoading && !albumsError && foundAlbums.length > 0 &&
+            <section id="albums">
               <section id="album-list"
-                       className={ selectedAlbum ? 'selected' : '' }>
-                  <ul>
-                    { foundAlbums.map((album: Album) => (
-                      <AlbumListItem key={ `${ album.id }` }
-                                     album={ album }
-                                     selected={ selectedAlbum === album }
-                                     albumClicked={ () => albumClicked(album) }/>
-                    ))
-                    }
-                  </ul>
+                      onTransitionEnd={ handleAlbumListTransitionEnd }
+                      style={{ width: isAlbumListAnimating ? '50%' : '100%' }}>
+                <ul>
+                  { foundAlbums.map((album: Album, index: number) => (
+                    <AlbumListItem className="animate-cascade"
+                                   style={{ animationDelay: `${index * 250}ms` }}
+                                   key={ `${ album.id }` }
+                                   album={ album }
+                                   selected={ selectedAlbum === album }
+                                   albumClicked={ () => albumClicked(album) }/>
+                  ))
+                  }
+                </ul>
               </section>
 
-            { albumGalleryError && <Alert severity="error">There was an issue fetching images for this album.</Alert> }
+              { isAlbumDetailsRendered && 
+                <section id="albumDetails">
+                  { albumGalleryError && <Alert severity="error">There was an issue fetching images for this album.</Alert> }
 
-            { albumGalleryLoading && <CircularProgress aria-label="Loading…"/> }
+                  { albumGalleryLoading && <CircularProgress color="success" aria-label="Loading…"/> }
 
-            { albumGalleryImages.length > 0 && !albumGalleryLoading && !albumGalleryError &&
-                <section id="selectedAlbum">
-                    <PhotoSlider images={ albumGalleryImages as Image[] }/>
-                    <div id="artist-title">
+                  { albumGalleryImages.length > 0 && !albumGalleryLoading && !albumGalleryError &&
+                    <section id="selectedAlbum">
+                      <PhotoSlider images={ albumGalleryImages as Image[] }/>
+                      <div id="artist-title">
                         <h3>{ selectedAlbum?.title }</h3>
-                    </div>
-                </section>
-            }
-          </section>
+                      </div>
+                    </section>
+                  }
+              </section> 
+              }
+
+              
+            </section>
+          }
+        </section>
       }
+
+      
 
       <iframe ref={ iframeRef }
               src={ TRUSTED_ORIGIN }

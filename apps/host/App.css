@@ -1,7 +1,6 @@
 #root {
   display: flex;
   align-items: center;
-  justify-content: center;
 }
 
 iframe {
@@ -13,43 +12,108 @@ iframe {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  margin: 4rem 1rem 2rem;
+  margin: 40vh 1rem 2rem;
   width: 97%;
+  transition: margin 1s ease-out;
+
+  #header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      scale: 0.75;
+    }
+
+    h1 {
+      transition: font-size 0.5s ease-out;
+    }
+
+    h1.top {
+      font-size: 40px;
+    }
+  }
 }
 
-#albums {
+#search.top {
+  margin-top: 1rem;
+}
+
+#albumContainer {
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: start;
-  flex-grow: 1;
+  align-items: center;
+  justify-content: center;
 
-  #album-list {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  #albums {
     width: 100%;
-
-    ul {
-      width: 100%;
-      padding: 0 1rem;
-    }
-  }
-
-  #album-list.selected {
-    width: 50%;
-  }
-
-  #selectedAlbum {
+    height: calc(128.3px * 6);
     display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    width: 50%;
-    height: 100%;
+    align-items: start;
+    position: relative;
 
-    .slider {
-      padding: 1rem 0;
+    #album-list {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      z-index: 10;
+      transition: width 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+
+      ul {
+        width: 100%;
+        margin: 0 1rem;
+        height: 100%;
+        background: honeydew;
+        border: 1px solid lightslategray;
+        padding: 0;
+
+        .animate-cascade {
+          opacity: 0;
+          animation: cascadeDown 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+      }
+    }
+
+    #albumDetails {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      #selectedAlbum {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        height: 100%;
+
+        .slider {
+          padding: 1rem 0;
+        }
+
+        h3 {
+          color: black;
+        }
+      }
     }
   }
 }
+
+@keyframes cascadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

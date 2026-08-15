@@ -15,7 +15,6 @@ function App() {
       }
 
       const payload = event.data;
-      console.log('Received event from host', payload);
       try {
         switch (payload.type) {
           case EventType.SEARCH:
@@ -46,7 +45,7 @@ function App() {
 
     window.addEventListener('message', handleMessageFromHost);
     return () => window.removeEventListener('message', handleMessageFromHost);
-  }, []);
+  }, [PARENT_ORIGIN]);
 
   return null;
 }

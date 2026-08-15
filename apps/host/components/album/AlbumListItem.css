@@ -3,8 +3,8 @@
   align-items: center;
   justify-content: start;
   height: 128px;
-  border: 1px solid #555;
-  background: #888;
+  border: 1px solid lightslategray;
+  background: lightcyan;
 
   img, video {
     padding-left: 1rem;
@@ -23,9 +23,13 @@
 }
 
 #info:hover {
-  background: #AAA;
+  background: rgb(210, 238, 238);
 }
 
 #info.selected {
-  background: #ADA;
+  background: rgb(201, 252, 201);
+}
+
+#info.selected:hover {
+  background: rgb(181, 228, 181);
 }
