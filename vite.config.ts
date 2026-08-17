@@ -4,8 +4,9 @@ import { resolve } from 'path';
 
 export default defineConfig(() => {
   const appTarget = process.env.APP;
+  const isTest = process.env.VITEST;
 
-  if (!appTarget) {
+  if (!appTarget && !isTest) {
     throw new Error('Please specify an APP environment variable (e.g., APP=app1).');
   }
 
@@ -18,7 +19,7 @@ export default defineConfig(() => {
     },
 
     // Set the root to the target app folder so Vite finds index.html natively
-    root: resolve(__dirname, `apps/${ appTarget }`),
+    root: isTest ? __dirname : resolve(__dirname, `apps/${ appTarget }`),
 
     build: {
       // Force the build output to go to the main dist folder under the app name
@@ -29,8 +30,14 @@ export default defineConfig(() => {
     // Optional: Allow the apps to easily import things from the root shared folder
     resolve: {
       alias: {
-        '@shared': resolve(__dirname, './shared-components')
+        '@shared': resolve(__dirname, './apps/shared-components')
       }
+    },
+
+    test: {
+      environment: 'happy-dom',
+      globals: true,
+      include: ['apps/**/*.{test,spec}.{ts,tsx}']
     }
   }
 })

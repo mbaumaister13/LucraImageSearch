@@ -4,13 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "pre-dev": "rm -rf ./node_modules/.vite",
     "dev:data": "cross-env APP=data vite --host --port 5555 --force",
     "dev:host": "cross-env APP=host vite --host --port 5554 --force",
     "build:data": "tsc -b && cross-env APP=data vite build",
     "build:host": "tsc -b && cross-env APP=host vite build",
     "build": "npm run build:data && npm run build:host",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -23,6 +26,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
@@ -32,8 +37,10 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
     "globals": "^17.7.0",
+    "happy-dom": "^20.11.2",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.65.0",
-    "vite": "^8.2.0"
+    "vite": "^8.2.0",
+    "vitest": "^4.1.10"
   }
 }

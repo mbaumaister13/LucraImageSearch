@@ -1,5 +1,5 @@
 import './PhotoSlider.css'
-import type { Image } from '../../models/album.model.ts';
+import type { Image } from '@shared/models/album.model.ts';
 import ImageContainer from '../image/ImageContainer.tsx';
 import { useState } from 'react';
 

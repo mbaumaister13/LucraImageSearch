@@ -1,5 +1,5 @@
 import './AlbumListItem.css'
-import type { Album } from '../../models/album.model.ts';
+import type { Album } from '@shared/models/album.model.ts';
 import ImageContainer from '../image/ImageContainer.tsx';
 
 interface AlbumListItemProps {
@@ -14,9 +14,9 @@ function AlbumListItem({ className, style, album, selected, albumClicked }: Albu
 
   return (
     <>
-      <section id="info"
+      <section id={`${album.id}-info`}
                style={style}
-               className={`${className} ${ selected ? 'selected' : '' }`}
+               className={`info ${className} ${ selected ? 'selected' : '' }`}
                onClick={ () => albumClicked(album) }>
         <ImageContainer key={ album.coverImage.id } link={ album.coverImage.link } type={ album.coverImage.type }
                         height={ 100 } width={ 100 }/>

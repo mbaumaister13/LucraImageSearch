@@ -3,8 +3,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 import { Alert, CircularProgress, debounce, TextField } from '@mui/material';
 import AlbumListItem from './components/album/AlbumListItem.tsx';
-import type { Album, AlbumEvent, Image } from './models/album.model.ts';
-import { EventType } from './consts/event.const.ts';
+import type { Album, AlbumEvent, Image } from '@shared/models/album.model';
+import { EventType } from '@shared/consts/event.const';
 import { useQuery } from '@tanstack/react-query'
 import { v4 as uuidv4 } from 'uuid';
 import PhotoSlider from './components/photo-slider/PhotoSlider.tsx';
@@ -103,9 +103,9 @@ function App() {
   const debouncedSearch = useMemo(
     () =>
       debounce((searchTerm) => {
-        setDebouncedSearchTerm(searchTerm); // Sets the value after 500ms
+        setDebouncedSearchTerm(searchTerm);
         setAreSearchResultsRendered(!!searchTerm);
-      }, 500),
+      }, 500), // Sets the value after 500ms of idle time
     []
   );
 
@@ -191,7 +191,7 @@ function App() {
               <section id="album-list"
                       onTransitionEnd={ handleAlbumListTransitionEnd }
                       style={{ width: isAlbumListAnimating ? '50%' : '100%' }}>
-                <ul>
+                <ul id="album-ul">
                   { foundAlbums.map((album: Album, index: number) => (
                     <AlbumListItem className="animate-cascade"
                                    style={{ animationDelay: `${index * 250}ms` }}
@@ -220,17 +220,14 @@ function App() {
                   }
               </section> 
               }
-
-              
             </section>
           }
         </section>
       }
 
-      
-
       <iframe ref={ iframeRef }
               src={ TRUSTED_ORIGIN }
+              id="data-app-iframe"
               title="Data App"
               sandbox="allow-scripts allow-same-origin"
               height="0"

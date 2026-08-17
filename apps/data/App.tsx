@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { Album, AlbumEvent } from './models/album.model';
-import { EventType } from './consts/event.const';
+import type { Album, AlbumEvent } from '@shared/models/album.model';
+import { EventType } from '@shared/consts/event.const';
 import { ImgurService } from './services/imgur.service';
 
 function App() {

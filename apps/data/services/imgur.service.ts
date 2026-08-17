@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { cache } from 'react';
-import { Album, Image } from '../models/album.model';
+import type { Album, Image } from '@shared/models/album.model';
 
 export class ImgurService {
 

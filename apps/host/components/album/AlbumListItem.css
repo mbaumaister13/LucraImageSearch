@@ -1,13 +1,12 @@
-#info {
+.info {
   display: flex;
   align-items: center;
   justify-content: start;
   height: 128px;
-  border: 1px solid lightslategray;
-  background: lightcyan;
+  transition: background 0.25s ease;
 
   img, video {
-    padding-left: 1rem;
+    margin-left: 1rem;
   }
 
   #artist-title {
@@ -23,13 +22,13 @@
 }
 
 #info:hover {
-  background: rgb(210, 238, 238);
+  background: #0006;
 }
 
 #info.selected {
-  background: rgb(201, 252, 201);
+  background: #2f26;
 }
 
 #info.selected:hover {
-  background: rgb(181, 228, 181);
+  background: #0006;
 }
