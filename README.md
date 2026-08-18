@@ -18,5 +18,5 @@
 2. Shuffle button that randomizes results based on your query. Applicable for limited number of results, not so much when showing all results.
 3. Filtering by tags.
 
-## Misc
+### Misc
 * Better local build mechanism. Current build requires deleting modules and running off host IP since Imgur kept blocking API calls from `localhost`.

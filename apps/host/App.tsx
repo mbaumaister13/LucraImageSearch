@@ -178,7 +178,7 @@ function App() {
       { areSearchResultsRendered && 
         <section id="albumContainer" 
                  onTransitionEnd={ handleSearchTransitionEnd }>
-          { albumsError && <Alert severity="error">There was an issue fetching albums for your search query.</Alert> }
+          { albumsError && <Alert id="searchError" severity="error">There was an issue fetching albums for your search query.</Alert> }
 
           { albumsLoading && <CircularProgress color="success" aria-label="Loading…"/> }
 
@@ -188,10 +188,10 @@ function App() {
 
           { !albumsLoading && !albumsError && foundAlbums.length > 0 &&
             <section id="albums">
-              <section id="album-list"
+              <section id="albumList"
                       onTransitionEnd={ handleAlbumListTransitionEnd }
                       style={{ width: isAlbumListAnimating ? '50%' : '100%' }}>
-                <ul id="album-ul">
+                <ul id="albumUl">
                   { foundAlbums.map((album: Album, index: number) => (
                     <AlbumListItem className="animate-cascade"
                                    style={{ animationDelay: `${index * 250}ms` }}
@@ -206,14 +206,14 @@ function App() {
 
               { isAlbumDetailsRendered && 
                 <section id="albumDetails">
-                  { albumGalleryError && <Alert severity="error">There was an issue fetching images for this album.</Alert> }
+                  { albumGalleryError && <Alert id="galleryError" severity="error">There was an issue fetching images for this album.</Alert> }
 
                   { albumGalleryLoading && <CircularProgress color="success" aria-label="Loading…"/> }
 
                   { albumGalleryImages.length > 0 && !albumGalleryLoading && !albumGalleryError &&
                     <section id="selectedAlbum">
                       <PhotoSlider images={ albumGalleryImages as Image[] }/>
-                      <div id="artist-title">
+                      <div id="artistTitle">
                         <h3>{ selectedAlbum?.title }</h3>
                       </div>
                     </section>
@@ -227,7 +227,7 @@ function App() {
 
       <iframe ref={ iframeRef }
               src={ TRUSTED_ORIGIN }
-              id="data-app-iframe"
+              id="dataAppIframe"
               title="Data App"
               sandbox="allow-scripts allow-same-origin"
               height="0"

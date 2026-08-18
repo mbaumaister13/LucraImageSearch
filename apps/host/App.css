@@ -53,7 +53,7 @@ iframe {
     align-items: start;
     position: relative;
 
-    #album-list {
+    #albumList {
       position: absolute;
       top: 0;
       left: 0;
