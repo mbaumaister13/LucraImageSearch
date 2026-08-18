@@ -20,7 +20,7 @@ function AlbumListItem({ className, style, album, selected, albumClicked }: Albu
                onClick={ () => albumClicked(album) }>
         <ImageContainer key={ album.coverImage.id } link={ album.coverImage.link } type={ album.coverImage.type }
                         height={ 100 } width={ 100 }/>
-        <div id="artist-title">
+        <div id="artistTitle">
           <p>{ album.title }</p>{ album.description && <p> - { album.description }</p> }
         </div>
       </section>

@@ -64,6 +64,7 @@ function App() {
         case EventType.SEARCH: {
           // Fetch stashed resolve/reject for request ID
           const pending = pendingAlbumsResolversRef.current.get(payload.requestId);
+          
           // Call resolve/reject depending on error status
           if (payload.error) {
             pending?.reject(new Error(payload.error))
@@ -77,6 +78,7 @@ function App() {
         case EventType.ALBUM_CLICK: {
           // Fetch stashed resolve/reject for request ID
           const pending = pendingAlbumGalleryResolversRef.current.get(payload.requestId);
+          
           // Call resolve/reject depending on error status
           if (payload.error) {
             pending?.reject(new Error(payload.error))

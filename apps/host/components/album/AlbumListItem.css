@@ -9,7 +9,7 @@
     margin-left: 1rem;
   }
 
-  #artist-title {
+  #artistTitle {
     display: flex;
     align-items: center;
     margin: 0 0.5rem;
@@ -21,14 +21,14 @@
   }
 }
 
-#info:hover {
+.info:hover {
   background: #0006;
 }
 
-#info.selected {
+.info.selected {
   background: #2f26;
 }
 
-#info.selected:hover {
+.info.selected:hover {
   background: #0006;
 }

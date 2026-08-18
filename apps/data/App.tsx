@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import type { Album, AlbumEvent } from '@shared/models/album.model';
+import type { Album, AlbumEvent, Image } from '@shared/models/album.model';
 import { EventType } from '@shared/consts/event.const';
 import { ImgurService } from './services/imgur.service';
 
@@ -29,7 +29,7 @@ function App() {
             window.parent.postMessage({
               type: payload.type,
               requestId: payload.requestId,
-              data: await Promise.all(album.images.map(async (image) => await imgurService.getImage(image.id)))
+              data: await Promise.all(album.images.map(async (image: Image) => await imgurService.getImage(image.id)))
             } as AlbumEvent, PARENT_ORIGIN);
             break;
           }

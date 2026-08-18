@@ -36,7 +36,6 @@ export class ImgurService {
       coverImage: await this.getImage(album.cover),
       images: album.images.map((image: any) => ({ id: image.id, link: image.link, type: image.type } as Image))
     } as Album)));
-    console.log(output);
     return output;
   });
 

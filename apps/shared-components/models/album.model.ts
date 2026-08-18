@@ -17,6 +17,6 @@ export interface Album {
 export interface AlbumEvent {
   type: EventType;
   requestId: string;
-  data?: string | Album | Album[] | Image[]; // string -> outbound SEARCH, Album -> outbound ALBUM_CLICK, Album[] -> inbound SEARCH, Image[] -> inbound ALBUM_CLICK
+  data?: string | Album | Album[] | Image[]; // string -> outbound SEARCH term, Album -> outbound ALBUM_CLICK, Album[] -> inbound SEARCH results, Image[] -> inbound ALBUM_CLICK gallery results
   error?: string;
 }
